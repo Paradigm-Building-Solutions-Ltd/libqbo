@@ -50,13 +50,15 @@ public class QboClient
         var oauthValidator = new OAuth2RequestValidator(token.AccessToken);
 
         var serviceContext = new ServiceContext(token.RealmId, IntuitServicesType.QBO, oauthValidator);
-        serviceContext.IppConfiguration.MinorVersion.Qbo = "23";
+        serviceContext.IppConfiguration.MinorVersion.Qbo = "75";
+        serviceContext.IppConfiguration.Message.Response.SerializationFormat = Intuit.Ipp.Core.Configuration.SerializationFormat.Json;
+        serviceContext.IppConfiguration.Message.Request.SerializationFormat = Intuit.Ipp.Core.Configuration.SerializationFormat.Json;
         serviceContext.IppConfiguration.BaseUrl.Qbo = _configuration.UseSandbox ? "https://sandbox-quickbooks.api.intuit.com/" : "https://quickbooks.api.intuit.com/";
 
         return serviceContext;
     }
 
-    public async Task<Report> GetReport(QuickBooksReportType report, Action<ReportService> configure)
+    public async Task<QboWrappedReport> GetReport(QuickBooksReportType report, Action<ReportService> configure)
     {
         var service = new ReportService(await GetServiceContext());
         configure(service);
@@ -66,7 +68,7 @@ public class QboClient
             return service.ExecuteReport(report.ToString());
         });
 
-        return result;
+        return new QboWrappedReport(result);
     }
 
     /// <summary>
@@ -85,5 +87,10 @@ public class QboClient
         });
 
         return result;
+    }
+
+    public void Test()
+    {
+
     }
 }
