@@ -1,6 +1,7 @@
 ﻿using Intuit.Ipp.Core;
 using Intuit.Ipp.Data;
 using Intuit.Ipp.DataService;
+using Intuit.Ipp.Exception;
 using Intuit.Ipp.OAuth2PlatformClient;
 using Intuit.Ipp.QueryFilter;
 using Intuit.Ipp.ReportService;
@@ -77,6 +78,7 @@ public class QboClient
     /// <example>
     /// var result = await qboClient.RunQuery<Customer>("SELECT * FROM Customer");
     /// </example>
+    /// <
     public async Task<ReadOnlyCollection<T>> RunQuery<T>(string query)
     {
         var service = new QueryService<T>(await GetServiceContext());
