@@ -78,7 +78,6 @@ public class QboClient
     /// <example>
     /// var result = await qboClient.RunQuery<Customer>("SELECT * FROM Customer");
     /// </example>
-    /// <
     public async Task<ReadOnlyCollection<T>> RunQuery<T>(string query)
     {
         var service = new QueryService<T>(await GetServiceContext());
@@ -91,8 +90,19 @@ public class QboClient
         return result;
     }
 
-    public void Test()
+    public async Task<Item?> GetItem(string id)
     {
-
+        var query = await RunQuery<Item>($"SELECT * FROM Item WHERE Id = '{id}'");
+        return query.FirstOrDefault();
     }
+
+    public Task<Item?> GetItem(ReferenceType reference) => GetItem(reference.Value);
+
+    public async Task<Account?> GetAccount(string id)
+    {
+        var query = await RunQuery<Account>($"SELECT * FROM Account WHERE Id = '{id}'");
+        return query.FirstOrDefault();
+    }
+
+    public Task<Account?> GetAccount(ReferenceType reference) => GetAccount(reference.Value);
 }
