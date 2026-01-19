@@ -90,6 +90,29 @@ public class QboClient
         return result;
     }
 
+    public async IAsyncEnumerable<T> RunListQuery<T>(string query)
+    {
+        var service = new QueryService<T>(await GetServiceContext());
+        var pageSize = 100;
+        var startPosition = 1;
+        ReadOnlyCollection<T> result;
+        do
+        {
+            var pagedQuery = $"{query} STARTPOSITION {startPosition} MAXRESULTS {pageSize}";
+            result = await System.Threading.Tasks.Task.Run(() =>
+            {
+                return service.ExecuteIdsQuery(pagedQuery);
+            });
+
+            foreach (var item in result)
+            {
+                yield return item;
+            }
+
+            startPosition += pageSize;
+        } while (result.Count == pageSize);
+    }
+
     public async Task<Item?> GetItem(string id)
     {
         var query = await RunQuery<Item>($"SELECT * FROM Item WHERE Id = '{id}'");
@@ -98,6 +121,10 @@ public class QboClient
 
     public Task<Item?> GetItem(ReferenceType reference) => GetItem(reference.Value);
 
+    /// <summary>
+    /// The ID of the account. 
+    /// Note: This is different than the GL account number.
+    /// </summary>
     public async Task<Account?> GetAccount(string id)
     {
         var query = await RunQuery<Account>($"SELECT * FROM Account WHERE Id = '{id}'");
