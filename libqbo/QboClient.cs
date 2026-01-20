@@ -127,6 +127,10 @@ public class QboClient
     /// </summary>
     public async Task<Account?> GetAccount(string id)
     {
+        var d = new DataService(await GetServiceContext());
+        var result = d.FindById<Account>(new Account() { Id = id });
+        return result;
+
         var query = await RunQuery<Account>($"SELECT * FROM Account WHERE Id = '{id}'");
         return query.FirstOrDefault();
     }
