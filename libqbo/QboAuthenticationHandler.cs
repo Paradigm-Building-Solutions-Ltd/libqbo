@@ -43,7 +43,7 @@ public class QboAuthenticationHandler
         if (Token == null || string.IsNullOrEmpty(Token.AccessToken) || string.IsNullOrEmpty(Token.RefreshToken) || string.IsNullOrEmpty(Token.RealmId))
         {
             _logger?.LogInformation("Stored token did not exist.");
-            throw new QboAuthenticationRequiredException();
+            throw new QboAuthenticationRequiredException("No stored token found.");
         }
 
         if (Token.AccessExpiry <= DateTimeOffset.UtcNow.AddMinutes(1) || Token.RefreshExpiry <= DateTimeOffset.UtcNow.AddMinutes(1))
@@ -54,7 +54,7 @@ public class QboAuthenticationHandler
             if (response.IsError)
             {
                 _logger?.LogError("Could not refresh access token.");
-                throw new QboAuthenticationRequiredException();
+                throw new QboAuthenticationRequiredException("Refreshing access token failed.");
             }
 
             _logger?.LogInformation("Refresh access token succeeded.");

@@ -6,4 +6,8 @@ public class QboAuthenticationRequiredException : Exception
         : base("The QuickBooks Online client is not authenticated. Please authenticate.")
     {
     }
+
+    public QboAuthenticationRequiredException(string? message) : base(message)
+    {
+    }
 }
